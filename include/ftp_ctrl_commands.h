@@ -4,5 +4,6 @@
 const char* USER = "USER";
 const char* PASSWORD = "PASS";
 const char* QUIT = "QUIT";
+const char* SET_DATA_PORT = "PORT";
 
 #endif

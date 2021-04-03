@@ -1,6 +1,7 @@
 #include <ftp_reply_codes.h>
 #include <ftp_ctrl_commands.h>
 #include <control_connection.h>
+#include <utils.h>
 
 void send_reply_code(client_struct* client, const char* code){
     client->connection.write(code);
@@ -37,6 +38,22 @@ void handle_quit(client_struct* client){
     client->connection.stop();
 }
 
+void handle_set_data_port(client_struct* client, String& command){
+    if(!client->logged_in){
+        send_reply_code(client, USER_NOT_LOGGED_IN);
+        return;
+    }
+    command = command.substring(strlen(SET_DATA_PORT));
+    command.trim();
+
+    int port = get_port_from_command(command);
+    if(port == -1){
+        send_reply_code(client, ARGS_SYNTAX_ERROR);
+    }
+    client->data_port = port;
+    send_reply_code(client, OK_REPLY);
+}
+
 void listen_command(client_struct* client, const char* server_password){
     String command = client->connection.readString();
 
@@ -50,6 +67,11 @@ void listen_command(client_struct* client, const char* server_password){
     }
     if(command.startsWith(QUIT)){
         handle_quit(client);
+        return;
+    }
+    if(command.startsWith(SET_DATA_PORT)){
+        handle_set_data_port(client, command);
+        return;
     }
     send_reply_code(client, COMM_NOT_SUPPORTED);
 }

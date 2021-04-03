@@ -20,8 +20,9 @@ void ftp_accept(ftp_server* server){
     }
     WiFiClient wiFiClient = server->connection.available();
     if(wiFiClient.connected()){
-        server->clients[server->num_clients].logged_in = false;
         server->clients[server->num_clients].connection = wiFiClient;
+        server->clients[server->num_clients].logged_in = false;
+        server->clients[server->num_clients].data_port = -1;
         greet_client(&server->clients[server->num_clients]);
         server->num_clients++;
     }
