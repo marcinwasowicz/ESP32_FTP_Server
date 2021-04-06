@@ -20,14 +20,14 @@ endif()
 
 add_custom_target(
     Production ALL
-    COMMAND C:\\Users\\marci\\.platformio\\penv\\Scripts\\platformio.exe -c clion run "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
+    COMMAND platformio -c clion run "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 add_custom_target(
     Debug ALL
-    COMMAND C:\\Users\\marci\\.platformio\\penv\\Scripts\\platformio.exe -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
+    COMMAND platformio -c clion run --target debug "$<$<NOT:$<CONFIG:All>>:-e${CMAKE_BUILD_TYPE}>"
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} include/ftp_reply_codes.h include/ftp_ctrl_commands.h include/control_connection.h src/control_connection.cpp include/ftp_server.h src/ftp_server.cpp include/utils.h src/utils.cpp)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST} include/ftp_reply_codes.h include/ftp_ctrl_commands.h include/control_connection.h src/control_connection.cpp include/ftp_server.h src/ftp_server.cpp include/utils.h src/utils.cpp include/data_connection.h src/data_connection.cpp)

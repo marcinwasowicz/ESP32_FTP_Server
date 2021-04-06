@@ -5,5 +5,10 @@ const char* USER = "USER";
 const char* PASSWORD = "PASS";
 const char* QUIT = "QUIT";
 const char* SET_DATA_PORT = "PORT";
+const char* LIST_FILES = "LIST";
+const char* PRINT_WORKING_DIR = "PWD";
+const char* FILE_TYPE = "TYPE";
+
+const char* CRLF = "\r\n";
 
 #endif

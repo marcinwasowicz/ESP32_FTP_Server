@@ -2,13 +2,7 @@
 #define ESP32_FTP_SERVER_CONTROL_CONNECTION_H
 
 #include <WiFi.h>
-
-struct client_struct{
-    WiFiClient connection;
-    String name;
-    bool logged_in;
-    int data_port;
-};
+#include <ftp_server.h>
 
 void send_reply_code(client_struct* client, const char* code);
 
@@ -20,9 +14,15 @@ void handle_password(client_struct* client, const char* server_password, String&
 
 void handle_quit(client_struct* client);
 
-void handle_set_data_port(client_struct* client, String& command);
+void handle_set_data_socket(client_struct* client, String& command);
 
-void listen_command(client_struct* client, const char* server_password);
+void handle_dir_listing(client_struct* client, String& command, ftp_server* server);
+
+void handle_print_working_directory(client_struct* client, ftp_server* server);
+
+void handle_type(client_struct* client);
+
+void listen_command(client_struct* client, ftp_server* server);
 
 void shut_down_ctrl_connection(client_struct* client);
 

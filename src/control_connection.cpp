@@ -1,6 +1,7 @@
 #include <ftp_reply_codes.h>
 #include <ftp_ctrl_commands.h>
 #include <control_connection.h>
+#include <data_connection.h>
 #include <utils.h>
 
 void send_reply_code(client_struct* client, const char* code){
@@ -38,7 +39,7 @@ void handle_quit(client_struct* client){
     client->connection.stop();
 }
 
-void handle_set_data_port(client_struct* client, String& command){
+void handle_set_data_socket(client_struct* client, String& command){
     if(!client->logged_in){
         send_reply_code(client, USER_NOT_LOGGED_IN);
         return;
@@ -46,15 +47,55 @@ void handle_set_data_port(client_struct* client, String& command){
     command = command.substring(strlen(SET_DATA_PORT));
     command.trim();
 
-    int port = get_port_from_command(command);
-    if(port == -1){
+    int result = get_socket_from_command(command, client);
+    if(result){
         send_reply_code(client, ARGS_SYNTAX_ERROR);
+        return;
     }
-    client->data_port = port;
     send_reply_code(client, OK_REPLY);
 }
 
-void listen_command(client_struct* client, const char* server_password){
+void handle_dir_listing(client_struct* client, String& command, ftp_server* server){
+    if(!client->logged_in){
+        send_reply_code(client, USER_NOT_LOGGED_IN);
+        return;
+    }
+    command = command.substring(strlen(LIST_FILES));
+    command.trim();
+    const char* path = command.c_str();
+    if(strlen(path) == 0){
+        path = server->root_path;
+    }
+    if(!check_file_status(path)){
+        send_reply_code(client, FILE_UNAVAILABLE);
+        return;
+    }
+    if(!open_data_connection(server, client)){
+        send_reply_code(client, DATA_CONNECTION_ERROR);
+        return;
+    }
+    send_reply_code(client, DATA_CONNECTION_OPENED);
+    sent_raw_bytes(server, get_dir_listing(path));
+    send_reply_code(client, DATA_ACTION_SUCCESFULL);
+    close_data_connection(server);
+    send_reply_code(client, DATA_CONNECTION_CLOSED);
+}
+
+void handle_print_working_directory(client_struct* client, ftp_server* server){
+    if(!client->logged_in){
+        send_reply_code(client, USER_NOT_LOGGED_IN);
+    }
+    send_reply_code(client, (PATHNAME + String(server->root_path) + CRLF).c_str());
+}
+
+void handle_type(client_struct* client){
+    if(!client->logged_in){
+        send_reply_code(client, USER_NOT_LOGGED_IN);
+    }
+    send_reply_code(client, OK_REPLY);
+}
+
+void listen_command(client_struct* client, ftp_server* server){
     String command = client->connection.readString();
 
     if(command.startsWith(USER)){
@@ -62,7 +103,7 @@ void listen_command(client_struct* client, const char* server_password){
         return;
     }
     if(command.startsWith(PASSWORD)){
-        handle_password(client, server_password, command);
+        handle_password(client, server->password, command);
         return;
     }
     if(command.startsWith(QUIT)){
@@ -70,7 +111,19 @@ void listen_command(client_struct* client, const char* server_password){
         return;
     }
     if(command.startsWith(SET_DATA_PORT)){
-        handle_set_data_port(client, command);
+        handle_set_data_socket(client, command);
+        return;
+    }
+    if(command.startsWith(LIST_FILES)){
+        handle_dir_listing(client, command, server);
+        return;
+    }
+    if(command.startsWith(PRINT_WORKING_DIR)){
+        handle_print_working_directory(client, server);
+        return;
+    }
+    if(command.startsWith(FILE_TYPE)){
+        handle_type(client);
         return;
     }
     send_reply_code(client, COMM_NOT_SUPPORTED);
