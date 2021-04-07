@@ -9,6 +9,7 @@ const char* LIST_FILES = "LIST";
 const char* PRINT_WORKING_DIR = "PWD";
 const char* FILE_TYPE = "TYPE";
 const char* RETRIEVE_FILE = "RETR";
+const char* STORE_FILE = "STOR";
 
 const char* CRLF = "\r\n";
 

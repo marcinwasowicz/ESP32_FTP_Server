@@ -30,6 +30,19 @@ bool check_file_status(const char* path){
     return SD.exists(path);
 }
 
+bool make_directory(const char* path){
+    if(!strlen(path)){
+        return true;
+    }
+    if(SD.exists(path)){
+        return true;
+    }
+    if(!SD.mkdir(path)){
+        return false;
+    }
+    return true;
+}
+
 void get_dir_listing(File dir, String& listing_buffer){
     while(true) {
         File entry = dir.openNextFile();

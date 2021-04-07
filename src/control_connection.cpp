@@ -121,6 +121,37 @@ void handle_retrieve_file(client_struct* client, ftp_server* server, String& com
     send_reply_code(client, DATA_CONNECTION_CLOSED);
 }
 
+void handle_store_file(client_struct* client, ftp_server* server, String& command){
+    if(!client->logged_in){
+        send_reply_code(client, USER_NOT_LOGGED_IN);
+        return;
+    }
+
+    command = command.substring(strlen(STORE_FILE));
+    command.trim();
+
+    const char* dir_path = command.substring(0, command.lastIndexOf('/')).c_str();
+    const char* file_path = command.c_str();
+
+    if(!make_directory(dir_path)){
+        send_reply_code(client, FILE_UNAVAILABLE);
+        return;
+    }
+    if(!open_data_connection(server, client)){
+        send_reply_code(client, DATA_CONNECTION_ERROR);
+        return;
+    }
+    send_reply_code(client, DATA_CONNECTION_OPENED);
+    if(!store_file(server, file_path)){
+        send_reply_code(client, FILE_ACTION_ABORTED);
+        close_data_connection(server);
+        return;
+    }
+    send_reply_code(client, DATA_ACTION_SUCCESFULL);
+    close_data_connection(server);
+    send_reply_code(client, DATA_CONNECTION_CLOSED);
+}
+
 void listen_command(client_struct* client, ftp_server* server){
     String command = client->connection.readString();
 
@@ -154,6 +185,10 @@ void listen_command(client_struct* client, ftp_server* server){
     }
     if(command.startsWith(RETRIEVE_FILE)){
         handle_retrieve_file(client, server, command);
+        return;
+    }
+    if(command.startsWith(STORE_FILE)){
+        handle_store_file(client, server, command);
         return;
     }
     send_reply_code(client, COMM_NOT_SUPPORTED);

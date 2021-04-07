@@ -33,6 +33,26 @@ bool send_file(ftp_server* server, const char* path){
     return true;
 }
 
+bool store_file(ftp_server* server, const char* path){
+    File file = SD.open(path, FILE_WRITE);
+    if(!file){
+        return false;
+    }
+    int delay_count = 2;
+    while(delay_count){
+        if(!server->active_data_connection.available()){
+            delay(server->delay_time);
+            delay_count--;
+            continue;
+        }
+        uint8_t read_bytes = server->active_data_connection.read();
+        file.write(read_bytes);
+        delay_count = 2;
+    }
+    file.close();
+    return true;
+}
+
 void close_data_connection(ftp_server* server){
     server->active_data_connection.stop();
 }

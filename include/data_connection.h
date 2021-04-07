@@ -11,6 +11,8 @@ void send_dir_listing(ftp_server* server, const char* path);
 
 bool send_file(ftp_server* server, const char* path);
 
+bool store_file(ftp_server* server, const char* path);
+
 void close_data_connection(ftp_server* server);
 
 #endif
