@@ -30,7 +30,7 @@ bool check_file_status(const char* path){
     return SD.exists(path);
 }
 
-void get_dir_listing_recur(File dir, String& listing_buffer){
+void get_dir_listing(File dir, String& listing_buffer){
     while(true) {
         File entry = dir.openNextFile();
         if (!entry) {
@@ -45,7 +45,7 @@ void get_dir_listing_recur(File dir, String& listing_buffer){
         if (entry.isDirectory()) {
             file_meta = "d" + file_meta;
             listing_buffer += file_meta;
-            get_dir_listing_recur(entry, listing_buffer);
+            get_dir_listing(entry, listing_buffer);
         }
         else{
             file_meta = "-" + file_meta;
@@ -53,12 +53,5 @@ void get_dir_listing_recur(File dir, String& listing_buffer){
         }
         entry.close();
     }
-}
-
-const char* get_dir_listing(const char* path){
-    String listing;
-    File dir = SD.open(path);
-    get_dir_listing_recur(dir, listing);
-    return listing.c_str();
 }
 

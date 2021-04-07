@@ -10,8 +10,27 @@ bool open_data_connection(ftp_server* server, client_struct* client){
     return true;
 }
 
-void sent_raw_bytes(ftp_server* server, const char* bytes){
-    server->active_data_connection.write(bytes);
+void send_dir_listing(ftp_server* server, const char* path){
+    String listing;
+    File dir = SD.open(path);
+    get_dir_listing(dir, listing);
+    server->active_data_connection.write(listing.c_str());
+}
+
+bool send_file(ftp_server* server, const char* path){
+    File file = SD.open(path);
+    if(!file){
+        return false;
+    }
+    while(file.available()){
+        uint8_t read_bytes = file.read();
+        if(!server->active_data_connection.write(read_bytes)){
+            file.close();
+            return false;
+        }
+    }
+    file.close();
+    return true;
 }
 
 void close_data_connection(ftp_server* server){

@@ -8,6 +8,7 @@ const char* SET_DATA_PORT = "PORT";
 const char* LIST_FILES = "LIST";
 const char* PRINT_WORKING_DIR = "PWD";
 const char* FILE_TYPE = "TYPE";
+const char* RETRIEVE_FILE = "RETR";
 
 const char* CRLF = "\r\n";
 

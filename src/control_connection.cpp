@@ -2,7 +2,6 @@
 #include <ftp_ctrl_commands.h>
 #include <control_connection.h>
 #include <data_connection.h>
-#include <utils.h>
 
 void send_reply_code(client_struct* client, const char* code){
     client->connection.write(code);
@@ -75,7 +74,7 @@ void handle_dir_listing(client_struct* client, String& command, ftp_server* serv
         return;
     }
     send_reply_code(client, DATA_CONNECTION_OPENED);
-    sent_raw_bytes(server, get_dir_listing(path));
+    send_dir_listing(server, path);
     send_reply_code(client, DATA_ACTION_SUCCESFULL);
     close_data_connection(server);
     send_reply_code(client, DATA_CONNECTION_CLOSED);
@@ -93,6 +92,33 @@ void handle_type(client_struct* client){
         send_reply_code(client, USER_NOT_LOGGED_IN);
     }
     send_reply_code(client, OK_REPLY);
+}
+
+void handle_retrieve_file(client_struct* client, ftp_server* server, String& command){
+    if(!client->logged_in){
+        send_reply_code(client, USER_NOT_LOGGED_IN);
+        return;
+    }
+    command = command.substring(strlen(RETRIEVE_FILE));
+    command.trim();
+    const char* path = command.c_str();
+    if(!check_file_status(path)){
+        send_reply_code(client, FILE_UNAVAILABLE);
+        return;
+    }
+    if(!open_data_connection(server, client)){
+        send_reply_code(client, DATA_CONNECTION_ERROR);
+        return;
+    }
+    send_reply_code(client, DATA_CONNECTION_OPENED);
+    if(!send_file(server, path)){
+        send_reply_code(client, FILE_ACTION_ABORTED);
+        close_data_connection(server);
+        return;
+    }
+    send_reply_code(client, DATA_ACTION_SUCCESFULL);
+    close_data_connection(server);
+    send_reply_code(client, DATA_CONNECTION_CLOSED);
 }
 
 void listen_command(client_struct* client, ftp_server* server){
@@ -124,6 +150,10 @@ void listen_command(client_struct* client, ftp_server* server){
     }
     if(command.startsWith(FILE_TYPE)){
         handle_type(client);
+        return;
+    }
+    if(command.startsWith(RETRIEVE_FILE)){
+        handle_retrieve_file(client, server, command);
         return;
     }
     send_reply_code(client, COMM_NOT_SUPPORTED);

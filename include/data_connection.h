@@ -3,10 +3,13 @@
 
 
 #include <ftp_server.h>
+#include <utils.h>
 
 bool open_data_connection(ftp_server* server, client_struct* client);
 
-void sent_raw_bytes(ftp_server* server, const char* bytes);
+void send_dir_listing(ftp_server* server, const char* path);
+
+bool send_file(ftp_server* server, const char* path);
 
 void close_data_connection(ftp_server* server);
 

@@ -18,6 +18,7 @@ const char* DATA_CONNECTION_UNAVAILABLE = "425 \r\n";
 const char* DATA_CONNECTION_ERROR = "426 \r\n";
 
 const char* FILE_UNAVAILABLE = "450 \r\n";
+const char* FILE_ACTION_ABORTED = "451 \r\n";
 const char* SERVICE_SHUT_DOWN = "421 \r\n";
 
 const char* COMM_SYNTAX_ERROR = "500 \r\n";

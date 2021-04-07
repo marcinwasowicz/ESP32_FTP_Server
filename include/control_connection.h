@@ -22,6 +22,8 @@ void handle_print_working_directory(client_struct* client, ftp_server* server);
 
 void handle_type(client_struct* client);
 
+void handle_retrieve_file(client_struct* client, ftp_server* server, String& command);
+
 void listen_command(client_struct* client, ftp_server* server);
 
 void shut_down_ctrl_connection(client_struct* client);
