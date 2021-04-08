@@ -129,11 +129,13 @@ void handle_store_file(client_struct* client, ftp_server* server, String& comman
 
     command = command.substring(strlen(STORE_FILE));
     command.trim();
+    String file_path = command;
 
-    const char* dir_path = command.substring(0, command.lastIndexOf('/')).c_str();
-    const char* file_path = command.c_str();
+    command = command.substring(0, command.lastIndexOf('/'));
+    command.trim();
+    String dir_path = command;
 
-    if(!make_directory(dir_path)){
+    if(!check_make_directory(dir_path)){
         send_reply_code(client, FILE_UNAVAILABLE);
         return;
     }

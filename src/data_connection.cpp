@@ -33,12 +33,12 @@ bool send_file(ftp_server* server, const char* path){
     return true;
 }
 
-bool store_file(ftp_server* server, const char* path){
+bool store_file(ftp_server* server, String& path){
     File file = SD.open(path, FILE_WRITE);
     if(!file){
         return false;
     }
-    int delay_count = 2;
+    int delay_count = MAX_BYTE_RETRIES;
     while(delay_count){
         if(!server->active_data_connection.available()){
             delay(server->delay_time);
@@ -47,7 +47,7 @@ bool store_file(ftp_server* server, const char* path){
         }
         uint8_t read_bytes = server->active_data_connection.read();
         file.write(read_bytes);
-        delay_count = 2;
+        delay_count = MAX_BYTE_RETRIES;
     }
     file.close();
     return true;

@@ -30,8 +30,8 @@ bool check_file_status(const char* path){
     return SD.exists(path);
 }
 
-bool make_directory(const char* path){
-    if(!strlen(path)){
+bool check_make_directory(String& path){
+    if(!path.length()){
         return true;
     }
     if(SD.exists(path)){
