@@ -13,7 +13,7 @@ const char* PATHNAME = "257 ";
 const char* DATA_CONNECTION_DUE_TO_OPEN = "150 \r\n";
 const char* DATA_CONNECTION_OPENED = "125 \r\n";
 const char* DATA_CONNECTION_CLOSED = "226 \r\n";
-const char* DATA_ACTION_SUCCESFULL = "250 \r\n";
+const char* DATA_ACTION_SUCCESSFUL = "250 \r\n";
 const char* DATA_CONNECTION_UNAVAILABLE = "425 \r\n";
 const char* DATA_CONNECTION_ERROR = "426 \r\n";
 

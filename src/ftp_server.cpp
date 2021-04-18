@@ -37,7 +37,7 @@ void ftp_handle_client(ftp_server* server, int client_id){
    }
 }
 
-void ftp_remove_disconected(ftp_server* server){
+void ftp_remove_disconnected(ftp_server* server){
     for(int i = 0; i<server->num_clients; i++){
         if(!server->clients[i].connection.connected()){
             server->num_clients--;
@@ -48,13 +48,11 @@ void ftp_remove_disconected(ftp_server* server){
 
 void ftp_loop(ftp_server* server){
     ftp_accept(server);
-
     for(int i = 0; i<server->num_clients; i++){
         ftp_handle_client(server, i);
         delay(server->delay_time);
     }
-    delay(server->delay_time);
-    ftp_remove_disconected(server);
+    ftp_remove_disconnected(server);
 }
 
 void ftp_shutdown(ftp_server* server){

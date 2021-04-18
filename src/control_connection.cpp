@@ -46,8 +46,7 @@ void handle_set_data_socket(client_struct* client, String& command){
     command = command.substring(strlen(SET_DATA_PORT));
     command.trim();
 
-    int result = get_socket_from_command(command, client);
-    if(result){
+    if(get_socket_from_command(command, client)){
         send_reply_code(client, ARGS_SYNTAX_ERROR);
         return;
     }
@@ -61,9 +60,10 @@ void handle_dir_listing(client_struct* client, String& command, ftp_server* serv
     }
     command = command.substring(strlen(LIST_FILES));
     command.trim();
-    const char* path = command.c_str();
-    if(strlen(path) == 0){
-        path = server->root_path;
+    String path = command;
+
+    if(!command.length()){
+        path = String(server->root_path);
     }
     if(!check_file_status(path)){
         send_reply_code(client, FILE_UNAVAILABLE);
@@ -75,7 +75,7 @@ void handle_dir_listing(client_struct* client, String& command, ftp_server* serv
     }
     send_reply_code(client, DATA_CONNECTION_OPENED);
     send_dir_listing(server, path);
-    send_reply_code(client, DATA_ACTION_SUCCESFULL);
+    send_reply_code(client, DATA_ACTION_SUCCESSFUL);
     close_data_connection(server);
     send_reply_code(client, DATA_CONNECTION_CLOSED);
 }
@@ -101,7 +101,8 @@ void handle_retrieve_file(client_struct* client, ftp_server* server, String& com
     }
     command = command.substring(strlen(RETRIEVE_FILE));
     command.trim();
-    const char* path = command.c_str();
+    String path = command;
+
     if(!check_file_status(path)){
         send_reply_code(client, FILE_UNAVAILABLE);
         return;
@@ -116,7 +117,7 @@ void handle_retrieve_file(client_struct* client, ftp_server* server, String& com
         close_data_connection(server);
         return;
     }
-    send_reply_code(client, DATA_ACTION_SUCCESFULL);
+    send_reply_code(client, DATA_ACTION_SUCCESSFUL);
     close_data_connection(server);
     send_reply_code(client, DATA_CONNECTION_CLOSED);
 }
@@ -149,14 +150,16 @@ void handle_store_file(client_struct* client, ftp_server* server, String& comman
         close_data_connection(server);
         return;
     }
-    send_reply_code(client, DATA_ACTION_SUCCESFULL);
+    send_reply_code(client, DATA_ACTION_SUCCESSFUL);
     close_data_connection(server);
     send_reply_code(client, DATA_CONNECTION_CLOSED);
 }
 
 void listen_command(client_struct* client, ftp_server* server){
     String command = client->connection.readString();
-
+    if(!command.length()){
+        return;
+    }
     if(command.startsWith(USER)){
         handle_user(client, command);
         return;

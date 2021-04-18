@@ -26,7 +26,7 @@ int get_socket_from_command(String& command, client_struct* client){
     return 0;
 }
 
-bool check_file_status(const char* path){
+bool check_file_status(String& path){
     return SD.exists(path);
 }
 

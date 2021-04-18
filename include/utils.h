@@ -8,7 +8,7 @@
 
 int get_socket_from_command(String& command, client_struct* client);
 
-bool check_file_status(const char* path);
+bool check_file_status(String& path);
 
 bool check_make_directory(String& path);
 

@@ -31,7 +31,7 @@ void ftp_accept(ftp_server* server);
 
 void ftp_handle_client(ftp_server* server, int client_id);
 
-void ftp_remove_disconected(ftp_server* server);
+void ftp_remove_disconnected(ftp_server* server);
 
 void ftp_loop(ftp_server* server);
 

@@ -10,14 +10,15 @@ bool open_data_connection(ftp_server* server, client_struct* client){
     return true;
 }
 
-void send_dir_listing(ftp_server* server, const char* path){
+void send_dir_listing(ftp_server* server, String& path){
     String listing;
     File dir = SD.open(path);
     get_dir_listing(dir, listing);
+    dir.close();
     server->active_data_connection.write(listing.c_str());
 }
 
-bool send_file(ftp_server* server, const char* path){
+bool send_file(ftp_server* server, String& path){
     File file = SD.open(path);
     if(!file){
         return false;
