@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ftp_server.h>
-#include <utils.h>
+#include <tamper.h>
+
 /**
  * cheat sheet for seting up circuit with microSD adapter
  * microSD adapter : | ESP32 board:
@@ -22,6 +23,10 @@ const int server_delay_time = 50;
 const int SD_CS_PIN = 5;
 const char* SD_FAILURE_MSG = "Failed to mount SD card. FTP service unavailable.";
 
+const int TAMPER_PIN = 34; // Any pin that can be input will work
+const char* SENSITIVE_FILE_PATH = "<path to file containing sensitive data>";
+
+tamper_task_data task_data;
 ftp_server server;
 
 void setup(){
@@ -31,6 +36,7 @@ void setup(){
         return;
     }
     ftp_init(&server, ssid, password, server_password, server_delay_time, root_path);
+    setup_tamper_isr(TAMPER_PIN, &task_data, SENSITIVE_FILE_PATH);
     Serial.println(WiFi.localIP());
 }
 
