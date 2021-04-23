@@ -56,10 +56,6 @@ void ftp_loop(ftp_server* server){
 }
 
 void ftp_shutdown(ftp_server* server){
-    for(int i = 0; i<server->num_clients; i++){
-        shut_down_ctrl_connection(&server->clients[i]);
-        server->clients[i].connection.stop();
-    }
     server->active_data_connection.stop();
     server->control_connection.stop();
 }
