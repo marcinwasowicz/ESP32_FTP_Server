@@ -60,6 +60,7 @@ void ftp_shutdown(ftp_server* server){
         shut_down_ctrl_connection(&server->clients[i]);
         server->clients[i].connection.stop();
     }
+    server->active_data_connection.stop();
     server->control_connection.stop();
 }
 

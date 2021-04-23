@@ -25,7 +25,7 @@ bool send_file(ftp_server* server, String& path){
     }
     while(file.available()){
         uint8_t read_bytes = file.read();
-        if(!server->active_data_connection.write(read_bytes)){
+        if(!server->active_data_connection.connected() || !server->active_data_connection.write(read_bytes)){
             file.close();
             return false;
         }
@@ -35,20 +35,35 @@ bool send_file(ftp_server* server, String& path){
 }
 
 bool store_file(ftp_server* server, String& path){
+    if(SD.exists(path)){
+        SD.remove(path);
+    }
     File file = SD.open(path, FILE_WRITE);
     if(!file){
         return false;
     }
-    int delay_count = MAX_BYTE_RETRIES;
-    while(delay_count){
+    int delay_factor = 1;
+    int delay_count = delay_factor * MIN_BYTE_RETRIES;
+    bool delay_detected = false;
+    while(server->active_data_connection.connected()){
+        if(!delay_count){
+            return false;
+        }
         if(!server->active_data_connection.available()){
             delay(server->delay_time);
             delay_count--;
+            delay_detected = true;
             continue;
+        }
+        if(delay_detected){
+            delay_factor *= 2;
+        }
+        else if(delay_factor > 1){
+            delay_factor /= 2;
         }
         uint8_t read_bytes = server->active_data_connection.read();
         file.write(read_bytes);
-        delay_count = MAX_BYTE_RETRIES;
+        delay_count = delay_factor * MIN_BYTE_RETRIES;
     }
     file.close();
     return true;

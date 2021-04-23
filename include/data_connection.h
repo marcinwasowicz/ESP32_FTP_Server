@@ -5,7 +5,7 @@
 #include <ftp_server.h>
 #include <utils.h>
 
-const int MAX_BYTE_RETRIES = 3;
+const int MIN_BYTE_RETRIES = 3;
 
 bool open_data_connection(ftp_server* server, client_struct* client);
 
