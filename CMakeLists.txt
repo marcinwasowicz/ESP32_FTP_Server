@@ -30,4 +30,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(Z_DUMMY_TARGET ${SRC_LIST} include/ftp_reply_codes.h include/ftp_ctrl_commands.h include/control_connection.h src/control_connection.cpp include/ftp_server.h src/ftp_server.cpp include/utils.h src/utils.cpp include/data_connection.h src/data_connection.cpp include/tamper.h src/tamper.cpp)
+add_executable(Z_DUMMY_TARGET ${SRC_LIST} include/tamper.h src/tamper.cpp include/FtpServer.h include/FtpClient.h src/FtpServer.cpp src/FtpClient.cpp include/Utilities.h src/Utilities.cpp include/FtpReplyCodes.h include/FtpCtrlCommands.h)

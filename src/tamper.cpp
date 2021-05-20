@@ -1,6 +1,5 @@
 #include <tamper.h>
 
-
 void setup_tamper_isr(const int tamper_pin, tamper_task_data* data, const char* sensitive_file_path){
     pinMode(tamper_pin, INPUT);
     data->triggered = false;
@@ -8,6 +7,7 @@ void setup_tamper_isr(const int tamper_pin, tamper_task_data* data, const char* 
     attachInterruptArg(tamper_pin, (void (*)(void *))tamper_isr, data, CHANGE);
 }
 
+// TODO : Create a task in main.cpp that waits on mutex and raise this mutex in isr.
 void tamper_isr(tamper_task_data* data){
     if(!data->triggered){
         xTaskCreate((TaskFunction_t) (tamper_task), "tamper_task", 10000, data, 1, nullptr);

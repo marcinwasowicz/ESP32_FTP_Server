@@ -1,6 +1,8 @@
-#include <utils.h>
+#include "FtpClient.h"
+#include "Utilities.h"
 
-int get_socket_from_command(String& command, client_struct* client){
+int Utilities::getSocketFromCommand(FtpClient &client, String &command)
+{
     int i = 0;
     int port = 0;
     char* tok_ptr = strtok(const_cast<char*>(command.c_str()), ",");
@@ -20,17 +22,19 @@ int get_socket_from_command(String& command, client_struct* client){
     }
     port = 256 * port + String(tok_ptr).toInt();
 
-    client->data_port = port;
-    client->data_transfer_ip = IPAddress(ip_bytes[0], ip_bytes[1], ip_bytes[2], ip_bytes[3]);
+    client.setDataPort(port);
+    client.setDataTransferIp(IPAddress(ip_bytes[0], ip_bytes[1], ip_bytes[2], ip_bytes[3]));
 
     return 0;
 }
 
-bool check_file_status(String& path){
+bool Utilities::checkFileStatus(const String &path)
+{
     return SD.exists(path);
 }
 
-bool check_make_directory(String& path){
+bool Utilities::checkMakeDirectory(const String &path)
+{
     if(!path.length()){
         return true;
     }
@@ -43,7 +47,8 @@ bool check_make_directory(String& path){
     return true;
 }
 
-void get_dir_listing(File dir, String& listing_buffer){
+void Utilities::getDirListing(File& dir, String& listingBuffer)
+{
     while(true) {
         File entry = dir.openNextFile();
         if (!entry) {
@@ -57,14 +62,13 @@ void get_dir_listing(File dir, String& listing_buffer){
         file_meta += "\r\n";
         if (entry.isDirectory()) {
             file_meta = "d" + file_meta;
-            listing_buffer += file_meta;
-            get_dir_listing(entry, listing_buffer);
+            listingBuffer += file_meta;
+            getDirListing(entry, listingBuffer);
         }
         else{
             file_meta = "-" + file_meta;
-            listing_buffer += file_meta;
+            listingBuffer += file_meta;
         }
         entry.close();
     }
 }
-

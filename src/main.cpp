@@ -1,6 +1,6 @@
 #include <Arduino.h>
-#include <ftp_server.h>
-#include <tamper.h>
+#include "tamper.h"
+#include "FtpServer.h"
 
 /**
  * cheat sheet for seting up circuit with microSD adapter
@@ -16,18 +16,18 @@
 const char* ssid = "<your internal network ssid>";
 const char* password = "<your internal network password>";
 
-const char* server_password = "<set password for server>";
-const char* root_path = "/";
-const int server_delay_time = 50;
+const char* serverPassword = "<set password for server>";
+const char* rootPath = "/";
+const int serverDelayTime = 50;
 
 const int SD_CS_PIN = 5;
 const char* SD_FAILURE_MSG = "Failed to mount SD card. FTP service unavailable.";
 
-const int TAMPER_PIN = 34; // Any pin that can be input will work
+const int TAMPER_PIN = 34; /* Any pin that can be input will work */
 const char* SENSITIVE_FILE_PATH = "<path to file containing sensitive data>";
 
 tamper_task_data task_data;
-ftp_server server;
+FtpServer server(serverPassword, serverDelayTime, rootPath);
 
 void setup(){
     Serial.begin(9600);
@@ -35,11 +35,11 @@ void setup(){
         Serial.println(SD_FAILURE_MSG);
         return;
     }
-    ftp_init(&server, ssid, password, server_password, server_delay_time, root_path);
+    server.init(ssid, password);
     setup_tamper_isr(TAMPER_PIN, &task_data, SENSITIVE_FILE_PATH);
     Serial.println(WiFi.localIP());
 }
 
 void loop(){
-    ftp_loop(&server);
+    server.loop();
 }
