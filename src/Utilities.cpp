@@ -5,19 +5,22 @@ int Utilities::getSocketFromCommand(FtpClient &client, String &command)
 {
     int i = 0;
     int port = 0;
-    char* tok_ptr = strtok(const_cast<char*>(command.c_str()), ",");
     int ip_bytes[4];
-    while(tok_ptr && i < 4){
+    char* tok_ptr = strtok(const_cast<char*>(command.c_str()), ",");
+    while(tok_ptr && i < 4)
+    {
         ip_bytes[i] = String(tok_ptr).toInt();
         tok_ptr = strtok(nullptr, ",");
         i++;
     }
-    if(!tok_ptr){
+    if(!tok_ptr)
+    {
         return -1;
     }
     port = 256 * port + String(tok_ptr).toInt();
     tok_ptr = strtok(nullptr, ",");
-    if(!tok_ptr){
+    if(!tok_ptr)
+    {
         return -1;
     }
     port = 256 * port + String(tok_ptr).toInt();
@@ -35,13 +38,16 @@ bool Utilities::checkFileStatus(const String &path)
 
 bool Utilities::checkMakeDirectory(const String &path)
 {
-    if(!path.length()){
+    if(!path.length())
+    {
         return true;
     }
-    if(SD.exists(path)){
+    if(SD.exists(path))
+    {
         return true;
     }
-    if(!SD.mkdir(path)){
+    if(!SD.mkdir(path))
+    {
         return false;
     }
     return true;
@@ -49,7 +55,8 @@ bool Utilities::checkMakeDirectory(const String &path)
 
 void Utilities::getDirListing(File& dir, String& listingBuffer)
 {
-    while(true) {
+    while(true)
+    {
         File entry = dir.openNextFile();
         if (!entry) {
             return;
@@ -60,12 +67,14 @@ void Utilities::getDirListing(File& dir, String& listingBuffer)
         file_meta += " ";
         file_meta += entry.name();
         file_meta += "\r\n";
-        if (entry.isDirectory()) {
+        if (entry.isDirectory())
+        {
             file_meta = "d" + file_meta;
             listingBuffer += file_meta;
             getDirListing(entry, listingBuffer);
         }
-        else{
+        else
+        {
             file_meta = "-" + file_meta;
             listingBuffer += file_meta;
         }

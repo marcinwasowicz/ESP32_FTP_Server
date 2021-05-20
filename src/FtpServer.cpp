@@ -124,9 +124,9 @@ bool FtpServer::storeFile(const String &path)
     int delay_factor = 1;
     int delay_count = delay_factor * FtpServer::minByteRetries;
     bool delay_detected = false;
-    while(this->activeDataConnection.connected()){
+    while(true){
         if(!delay_count){
-            return false;
+            return true;
         }
         if(!this->activeDataConnection.available()){
             delay(this->delayTime);

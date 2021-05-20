@@ -197,7 +197,7 @@ void FtpClient::handleStoreFile(FtpServer &server, String &command)
     }
     this->sendReplyCode(FtpReplyCodes::DATA_CONNECTION_OPENED);
     if(!server.storeFile(file_path)){
-       this->sendReplyCode(FtpReplyCodes::FILE_ACTION_ABORTED);
+        this->sendReplyCode(FtpReplyCodes::FILE_ACTION_ABORTED);
         server.closeDataConnection();
         return;
     }
