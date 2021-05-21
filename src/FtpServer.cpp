@@ -126,7 +126,7 @@ bool FtpServer::storeFile(const String &path)
     bool delay_detected = false;
     while(true){
         if(!delay_count){
-            return true;
+            break;
         }
         if(!this->activeDataConnection.available()){
             delay(this->delayTime);
